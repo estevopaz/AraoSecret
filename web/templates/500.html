@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h2>Internal server error</h2>
+    <p>
+        Please, notify us about this error and how to reproduce it.<br/>
+        Thanks !
+    </p>
+
+    <h3>Error</h3>
+    <textarea readonly="readonly"
+              style="resize: vertical; width: 100%; height: 450px;"
+              >{{ msg }}</textarea>
+
+{% endblock %}

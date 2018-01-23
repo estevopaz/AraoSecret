@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h2>Login</h2>
+    <form method="POST">
+        <table>
+            <tr>
+                <td><b>User</b></td>
+                <td>
+                    <input type="text" name="alias" placeholder="alias" required="required"
+                           style="width: 100px;"
+                           value="{{ user }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Pass</b></td>
+                <td>
+                    <input type="password" name="pass" placeholder="password" required="required"
+                           style="width: 100px;"
+                           value="{{ password }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Authenticate"/></td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock %}

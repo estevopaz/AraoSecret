@@ -1,0 +1,149 @@
+
+/* Template */
+
+a {
+    cursor: pointer;
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 14px;
+    margin: 0px 20px 20px 20px;
+    border: 2px solid #ccc;
+    background: #F5F5F5;
+}
+
+a, h1, h2, h3, h4 {
+    color: #377BA8;
+}
+
+footer {
+    padding: 5px;
+    text-align: center;
+}
+
+hr {
+    border: 0;
+    height: 0;
+    border-bottom: 2px solid #eee;
+}
+
+table {
+    font-size: 12px;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+table th {
+    padding: 8px;
+    white-space: nowrap;
+}
+table td {
+    padding: 8px;
+}
+
+.body {
+    padding: 10px;
+    background: white;
+}
+
+
+/* Messages */
+.error {
+    background: #F0D6D6;
+    border: 1px solid #AACBE2;
+    padding: 0.5em;
+}
+.info {
+    background: #CEE5F5;
+    border: 1px solid #AACBE2;
+    padding: 0.5em;
+}
+
+
+/* Menu */
+.menu {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+.menu li {
+    float: left;
+}
+.menu li a {
+    text-decoration: none;
+    color: #000;
+    display: block;
+    margin-left: 20px;
+    border-bottom: 4px solid #ffffff;
+}
+.menu li a:hover {
+    border-bottom: 4px solid #377BA8;
+}
+
+
+/* Buttons */
+input[type="submit"] {
+    cursor: pointer;
+}
+
+
+/* Table with borders */
+.bordered {
+    font-size: 11px;
+    margin-bottom: 5px;
+    border-collapse: collapse !important;
+}
+.bordered th {
+    padding: 8px;
+    white-space: nowrap;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+.bordered td {
+    padding: 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+
+/* Log Messages */
+.logError {
+    color: red;
+    font-weight: bold;
+}
+
+.logWarning {
+    color: orange;
+    font-weight: bold;
+}
+
+
+/* Colors */
+.green {
+    color: #44EA45;
+}
+.orange {
+    color: #FFA500;
+}
+.red {
+    color: #DC302D;
+}
+
+
+/* DataTables */
+.dataTables_wrapper {
+    font-size: 11px;
+}
+.dataTables_length {
+    padding-top: 4px;
+}
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: none !important;
+}
+
+
+.bool_sign {
+    font-size: calc(100% + 5px);
+    padding-left: calc(50% - (13px / 2));
+}

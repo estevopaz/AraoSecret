@@ -1,0 +1,6 @@
+#
+# Required libs
+#
+
+psycopg2  # No necessary if you use MySQL
+SecureString>=0.2

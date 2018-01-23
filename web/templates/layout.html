@@ -1,0 +1,54 @@
+{% import 'macros.html' as macros %}
+
+<!doctype html>
+<html>
+
+    <head>
+        {% block head %}
+            <meta charset="UTF-8">
+            <title>AraoSecret</title>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <!-- Our CSS -->
+            <link rel="stylesheet" type="text/css"
+                  href="{{ url_for('static', filename='style.css') }}?version=1.0"/>
+        {% endblock %}
+    </head>
+
+    <body>
+        <div class="body">
+            <div style="float:right">
+                {% if current_user.is_authenticated %}
+                    <div style="text-align: right; margin: 0px 0px 5px 0px;">
+                        {{ current_user.alias }} | <a href="{{ url_for('logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+                <ul class="menu">
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('view_index') }}">Index</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('view_register') }}">Register</a></li>
+                    {% endif %}
+                </ul>
+                <div style="clear: both;"></div>
+            </div>
+            <h1 style="margin: 30px 0px 0px 20px;">AraoSecret</h1>
+            <div style="clear:both"></div>
+            <hr/>
+            {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {% for error in errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+            <div style="padding: 10px 0px 20px 10px;">
+                {% block body %}{% endblock %}
+            <div style="clear: both;"></div>
+            </div>
+        </div>
+    </body>
+
+    <footer>
+        AraoSL - 2018
+    </footer>
+
+</html>

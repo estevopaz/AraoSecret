@@ -1,0 +1,226 @@
+
+{% macro input_multiple(name, value, required=True, max=4, placeholders=None, split=None) -%}
+    {% for i in range(max) %}
+        <div id="{{ name }}_{{ i }}"
+            {% if split %}
+                {% if not loop.first and (not value or not value.split(split)[i]) %}
+                    style="display: none;"
+                {% endif %}
+            {% else %}
+                {% if not loop.first and (not value or not '[OR]'.join(value.split('|')).split('[OR]')[i]) %}
+                    style="display: none;"
+                {% endif %}
+            {% endif %}>
+
+            <input name="{{ name }}[]" type="text"
+                {% if loop.first and required %}
+                    required="required"
+                {% endif %}
+                {% if value %}
+                    {% if split %}
+                        value="{{ value.split(split)[i]|default('', True)|trim }}"
+                    {% else %}
+                        value="{{ '[OR]'.join(value.split('|')).split('[OR]')[i]|default('', True)|trim }}"
+                    {% endif %}
+                {% endif %}
+                {% if placeholders and i < placeholders|length %}
+                    placeholder="{{ placeholders[i] }}"
+                {% endif %}
+                style="width: 400px;"/>
+
+            {% if split %}
+                {% if not loop.last and (not value or not value.split('[OR]')[i + 1]) %}
+                    <a onclick="$('#{{ name }}_{{ i + 1 }}').show(); $(this).hide();">+</a>
+                {% endif %}
+            {% else %}
+                {% if not loop.last and (not value or not '[OR]'.join(value.split('|')).split('[OR]')[i + 1]) %}
+                    <a onclick="$('#{{ name }}_{{ i + 1 }}').show(); $(this).hide();">+</a>
+                {% endif %}
+            {% endif %}
+
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+
+{% macro dataframe_to_table(dataframe, index=False, skip_header=False,
+                            max_height=300, table_class='bordered', columns=None) -%}
+
+    {% if not columns %}
+        {% set columns = dataframe.columns %}
+    {% endif %}
+
+    <div style="max-height: {{ max_height }}px;
+                overflow-y: auto;
+                display: inline-block;">
+                <!-- padding-right: 15px;">  <!-- Keep space on right to display Y scroll if necessary -->
+        <table class="{{ table_class }}">
+            <!-- Headers -->
+            {% if not skip_header %}
+                <tr>
+                    {% if index %}
+                        {% if dataframe.index.name %}
+                            <th>{{ dataframe.index.name }}</th>
+                        {% else %}
+                            <th></th>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for column in columns %}
+                        {% if column not in ('_color_', ) and column in dataframe.columns %}
+                            <th>
+                                {% if column == 'Error' %}
+                                    <span class="red">{{ column }}</span>
+                                {% elif column == 'Warning' %}
+                                    <span class="orange">{{ column }}</span>
+                                {% else %}
+                                    {{ column }}
+                                {% endif %}
+                            </th>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endif %}
+            <!-- Rows -->
+            {% for _index_ in dataframe.index %}
+                <tr>
+                    {% if index %}
+                        <th style="text-align: left;">
+                            {% if _index_ == 'Error' %}
+                                <span class="red">{{ _index_ }}</span>
+                            {% elif _index_ == 'Warning' %}
+                                <span class="orange">{{ _index_ }}</span>
+                            {% else %}
+                                {{ _index_ }}
+                            {% endif %}
+                        </th>
+                    {% endif %}
+
+                    {% for column in columns %}
+                        {% if column not in ('_color_', ) and column in dataframe.columns %}
+
+                            {% set color = '' %}
+                            {% if '_color_' in dataframe %}
+                                {% set color = dataframe.ix[_index_]['_color_'] %}
+                            {% endif %}
+
+                            {% set value = dataframe.ix[_index_][column] %}
+
+                            {% set link = False %}
+                            {% if value is string and value.startswith('http') %}
+                                {% set link = True %}
+                            {% endif %}
+
+                            <td class="{{ color }}">
+                                {% if link %}
+                                    <a href="{{ value }}">
+                                        {{ value }}
+                                    </a>
+                                {% else %}
+                                    {{ value }}
+                                {% endif %}
+                            </td>
+
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{%- endmacro %}
+
+
+{% macro create_datatable(id, data_set, table_class='bordered') -%}
+    <table id="{{ id }}" class="{{ table_class }}" style="max-width: 100%;"></table>
+    <script>
+        $(document).ready(function() {
+            $("#{{ id }}").DataTable( {
+                data: {{ data_set['data']|safe }},
+                columns: [
+                    {% for column in data_set['columns'] %}
+                        { title: "{{ column }}",
+                        {% if 'URL' in column and 'URLs' not in column %}
+                            render: function ( data, type, row, meta ) {
+                                return '<a href="' + data + '" target="_blank">' + data + '</a>';
+                            },
+                        {% endif %}
+                        },
+                    {% endfor %}
+                ],
+                {% if 'order' in data_set %}
+                    order: {{ data_set['order']|safe }}
+                {% endif %}
+            } );
+        } );
+    </script>
+{%- endmacro %}
+
+
+{% macro test_url(urls, test) -%}
+    <h4>Select target URL to test</h4>
+    <form method="POST">
+        <div style="max-height: 120px; overflow-y: auto; display: inline-block; width: calc(100% - 15px);
+                    padding-right: 10px;">  <!-- Keep space on right to display Y scroll if necessary -->
+            <input name="test_url[]" type="text" style="width: calc(100% - 10px);"
+                   placeholder="Custom URL"/>
+            {% if urls %}
+                <table style="font-size: 10px;">
+                    {% for url in urls %}
+                        <tr>
+                            <td style="padding: 0px;">
+                                <input name="test_url[]" type="radio" value="{{ url }}"
+                                    {% if test and test['URL'] == url %}
+                                        checked="checked"
+                                    {% endif %}/>
+                            </td>
+                            <td style="padding: 0px;">{{ url }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+        <br/>
+        <input type="submit" value="Test"/>
+    </form>
+{%- endmacro %}
+
+
+{% macro advertiser_header(advertiser) -%}
+    <table class="bordered">
+        <tr>
+            <td>Client</td>
+            <td>
+                <a href="{{ url_for('view_client', client_id=advertiser.client.id) }}">
+                    {{ advertiser.client }}
+                </a>
+            </td>
+            <td>Users</td>
+            <td style="max-width: 600px;">{{ advertiser.client.users|join(', ') }}</td>
+        </tr>
+        <tr>
+            <td><h2>{{ advertiser.id_ }}</h2></td>
+            <td><h2>{{ advertiser.accountname }}</h2></td>
+            <td>Active</td>
+            <td>
+                <span
+                    {% if advertiser.active %}
+                        class="green"
+                    {% else %}
+                        class="red"
+                    {% endif %}>
+                    {{ advertiser.active }}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>Website</td>
+            <td>
+                {% if advertiser.website %}
+                    <a href="{{ advertiser.website }}">{{ advertiser.website }}</a>
+                {% endif %}
+            </td>
+            <td>CMS</td>
+            <td>{{ advertiser.cms }}</td>
+        </tr>
+    </table>
+{%- endmacro %}

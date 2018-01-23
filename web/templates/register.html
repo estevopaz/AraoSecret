@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h2>Registration</h2>
+    <form method="POST">
+        <table>
+            <tr>
+                <td><b>Alias</b></td>
+                <td>
+                    <input type="text" name="alias" placeholder="alias" required="required"
+                           style="width: 100px;"
+                           value="{{ alias }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>eMail</b></td>
+                <td>
+                    <input type="email" name="email"
+                           placeholder="email@domain.com"
+                           required="required"
+                           style="width: 150px;"
+                           value="{{ email }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Password</b></td>
+                <td>
+                    <input type="password" name="password" placeholder="password"
+                           required="required"
+                           style="width: 100px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Password conf.</b></td>
+                <td>
+                    <input type="password" name="password_conf" placeholder="password"
+                           required="required"
+                           style="width: 100px;"/>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Register"/></td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock %}
