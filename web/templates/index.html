@@ -1,40 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    <div style="float: left; padding-right: 50px;">
-
-        <h3>Clients</h3>
-        {{ macros.create_datatable('clients', client_table) }}
-
-        <br/>
-        TODO : Add new client
-
-        {% if current_user.has_role('admin') %}
-            <h2>Tools</h2>
-            <ul>
-                <li><a href="{{ url_for('view_events') }}">Events</a></li>
-                <li><a href="{{ url_for('view_logs') }}">Logs</a></li>
-            </ul>
-        {% endif %}
-
-    </div>
-
-    {% if current_user.has_role('admin') %}
-        <div style="float: left;">
-
-            <h3>AdWords Download Warnings</h3>
-            {{ macros.create_datatable('adwords_download_warnings', warnings['adwords_download']) }}
-
-            <h3>IChecker Warnings</h3>
-            {{ macros.create_datatable('ichecker_warnings', warnings['ichecker']) }}
-
-            <h3>ICounter Warnings</h3>
-            {{ macros.create_datatable('icounter_warnings', warnings['icounter']) }}
-
-            <h3>SCrawler Warnings</h3>
-            {{ macros.create_datatable('scrawler_warnings', warnings['scrawler']) }}
-
-        </div>
-    {% endif %}
+    TODO
 
 {% endblock %}

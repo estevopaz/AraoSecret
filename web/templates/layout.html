@@ -17,14 +17,12 @@
     <body>
         <div class="body">
             <div style="float:right">
-                {% if current_user.is_authenticated %}
-                    <div style="text-align: right; margin: 0px 0px 5px 0px;">
-                        {{ current_user.alias }} | <a href="{{ url_for('logout') }}">Logout</a>
-                    </div>
-                {% endif %}
                 <ul class="menu">
+                    <li>{{ current_user.alias }}</li>
+                    <li style="padding-left: 20px;">|</li>
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('view_index') }}">Index</a></li>
+                        <li><a href="{{ url_for('view_logout') }}">Logout</a></li>
                     {% else %}
                         <li><a href="{{ url_for('view_register') }}">Register</a></li>
                     {% endif %}

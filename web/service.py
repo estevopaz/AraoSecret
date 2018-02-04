@@ -112,7 +112,7 @@ class User(flask_login.UserMixin):
         '''
         try:
             return User(get_db().query(arao_secret.db.model.User)
-                        .filter(arao_secret.db.model.User.user_id == user_id)
+                        .filter(arao_secret.db.model.User.id == user_id)
                         .one())
         except sqlalchemy.orm.exc.NoResultFound:
             return None
@@ -143,24 +143,23 @@ def view_login():
     '''
     alias = flask.request.values.get('alias', '')
     password = flask.request.values.get('pass', '')
-    if alias and password:
+    errors = list()
+    if alias:
+
         try:
             # Login and validate the user
-            user = arao_secret.manager.get_user(get_db(), alias, password)
-            SecureString(password)
+            user = arao_secret.manager.get_user(get_db(), alias, password).user
+            SecureString.clearmem(password)
             # user should be an instance of your `User` class
             flask_login.login_user(User(user))
 
-            next_ = flask.request.args.get('next')
-            # is_safe_url should check if the url is safe for redirects.
-            # See http://flask.pocoo.org/snippets/62/ for an example.
-            if not is_safe_url(next_):
-                return flask.abort(400)
+            return flask.redirect(flask.request.args.get('next') or flask.url_for('view_index'))
 
-            return flask.redirect(next_ or flask.url_for('view_index'))
         except sqlalchemy.orm.exc.NoResultFound:
-            pass
-    return flask.render_template('login.html', user=alias)
+
+            errors.append('Sorry, wrong user or password !')
+
+    return flask.render_template('login.html', errors=errors)
 
 
 @APP.route('/logout')
@@ -180,7 +179,7 @@ def view_index():
     '''
     Main index, entry point.
     '''
-    return flask.render_template('login.html', user=alias)
+    return flask.render_template('index.html')
 
 
 @APP.route('/register', methods=('GET', 'POST'))
@@ -194,11 +193,14 @@ def view_register():
     if flask.request.method == 'POST':
         alias = flask.request.form.get('alias')
         email = flask.request.form.get('email')
+        pass_1 = flask.request.form.get('password')
+        pass_2 = flask.request.form.get('password_conf')
         # TODO : Verify password strong
-        if flask.request.form.get('password') == flask.request.form.get('password_conf'):
+        if pass_1 == pass_2:
             try:
-                user = arao_secret.manager.create_user(get_db(), alias, email,
-                                                       flask.request.form.get('password'))
+                user = arao_secret.manager.create_user(get_db(), alias, email, pass_1).user
+                SecureString.clearmem(pass_1)
+                SecureString.clearmem(pass_2)
                 # user should be an instance of your `User` class
                 flask_login.login_user(User(user))
                 return flask.redirect(flask.request.args.get('next') or flask.url_for('view_index'))
@@ -206,7 +208,9 @@ def view_register():
                 errors.append("I'm sorry, your alias is already registered, please,"
                               " choose a different one.")
         else:
-            errors.append("I'm sorry, your passwords don't match !'")
+            errors.append("Sorry, your passwords don't match !'")
+        SecureString.clearmem(pass_1)
+        SecureString.clearmem(pass_2)
     return flask.render_template('register.html', alias=alias, email=email, errors=errors)
 
 
